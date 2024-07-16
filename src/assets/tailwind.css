@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+@layer components {
+    .custom-button {
+      @apply bg-blue-500 w-40;
+    }
+  }
+
+
+  .btn-custom {
+    @apply bg-blue-500 w-40;
+  }
+
+  @layer utilities {
+    .placeholder-style::placeholder {
+        color: #616161;
+       font-size: 14px;
+    }
+  }
+  
