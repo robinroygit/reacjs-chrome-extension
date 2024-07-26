@@ -2,23 +2,26 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const tailwindcss = require('tailwindcss')
-const autoprefixer = require('autoprefixer')
+const tailwindcss = require('tailwindcss');
+const autoprefixer = require('autoprefixer');
 
 module.exports = {
     entry: {
-        popup: path.resolve('src/popup/index.tsx'),
-        options: path.resolve('src/options/index.tsx'),
-        background: path.resolve('src/background/background.ts'),
-        contentScript: path.resolve('src/contentScript/index.tsx'),
-        newTab: path.resolve('src/tabs/index.tsx'),
+        popup: path.resolve('src/popup/index.jsx'),
+        options: path.resolve('src/options/index.jsx'),
+        background: path.resolve('src/background/background.js'),
+        contentScript: path.resolve('src/contentScript/index.jsx'),
+        newTab: path.resolve('src/tabs/index.jsx'),
     },
     module: {
         rules: [
             {
-                use: 'ts-loader',
-                test: /\.tsx?$/,
+                use: 'babel-loader',
+                test: /\.jsx?$/,
                 exclude: /node_modules/,
+                options: {
+                    presets: ['@babel/preset-react'],
+                },
             },
             {
                 test: /\.css$/i,
@@ -45,44 +48,44 @@ module.exports = {
                 type: 'assets/resource',
                 test: /\.(png|jpg|jpeg|gif|woff|woff2|tff|eot|svg)$/,
             },
-        ]
+        ],
     },
-    "plugins": [
+    plugins: [
         new CleanWebpackPlugin({
-            cleanStaleWebpackAssets: false
+            cleanStaleWebpackAssets: false,
         }),
         new CopyPlugin({
             patterns: [{
                 from: path.resolve('src/static'),
-                to: path.resolve('dist')
-            }]
+                to: path.resolve('dist'),
+            }],
         }),
         ...getHtmlPlugins([
             'popup',
             'options',
-            'newTab'
-        ])
+            'newTab',
+        ]),
     ],
     resolve: {
-        extensions: ['.tsx', '.js', '.ts']
+        extensions: ['.jsx', '.js'],
     },
     output: {
         filename: '[name].js',
-        path: path.join(__dirname, 'dist')
+        path: path.join(__dirname, 'dist'),
     },
     optimization: {
         splitChunks: {
-            chunks(chunk){
-                return chunk.name !=='contentScript';
-            }
-        }
-    }
-}
+            chunks(chunk) {
+                return chunk.name !== 'contentScript';
+            },
+        },
+    },
+};
 
 function getHtmlPlugins(chunks) {
     return chunks.map(chunk => new HtmlPlugin({
         title: 'React Extension',
         filename: `${chunk}.html`,
-        chunks: [chunk]
-    }))
+        chunks: [chunk],
+    }));
 }
