@@ -1,23 +1,8 @@
-// chrome.runtime.sendMessage('I am loading content script', (response) => {
-//     console.log(response);
-//     console.log('I am content script')
-
-// })
-
-// window.onload = (event) => {
-//     console.log('page is fully loaded');
-// };
-
-console.log("robin  --");
-
-import React, { useState, useEffect, useRef } from "react";
-import { FaSearch } from "react-icons/fa";
+import React, { useEffect, useRef, useState } from "react";
 import { AiOutlinePoweroff } from "react-icons/ai";
-import { CiSettings } from "react-icons/ci";
-import { FaSun, FaMoon } from "react-icons/fa";
+import { FaMoon, FaSun } from "react-icons/fa";
 import { IoIosClose } from "react-icons/io";
 import SearchModal from "./components/SearchModal";
-import SettingsModal from "./components/SettingsModal";
 
 function contentScript() {
   const draggableRef = useRef(null);
@@ -28,32 +13,18 @@ function contentScript() {
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [dragged, setDragged] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [selectedSymbol, setSelectedSymbol] = useState("");
-
   const [categories, setCategories] = useState({
     category1: [],
     category2: [],
     category3: [],
     category4: [],
   });
-
   const [selectedCategory, setSelectedCategory] = useState("category1");
-
-  const [isOpenSettings, setIsOpenSettings] = useState(false);
-  const [apiKey, setApiKey] = useState("");
 
   // Load states from chrome.storage.local
   useEffect(() => {
     chrome.storage.local.get(
-      [
-        "darkMode",
-        "containerVisible",
-        "position",
-        "categories",
-        "selectedCategory",
-        "apiKey",
-        "selectedSymbol",
-      ],
+      ["darkMode", "containerVisible", "position", "categories"],
       (result) => {
         if (result.darkMode !== undefined) {
           setDarkMode(result.darkMode);
@@ -67,39 +38,9 @@ function contentScript() {
         if (result.categories !== undefined) {
           setCategories(result.categories);
         }
-        if (result.selectedCategory !== undefined) {
-          setSelectedCategory(result.selectedCategory);
-        }
-        if (result.apiKey) {
-          setApiKey(result.apiKey);
-        }
-        if (result.selectedSymbol) {
-          setSelectedSymbol(result.selectedSymbol);
-        }
       }
     );
   }, []);
-
-  const handleSaveApiKey = (key) => {
-    setApiKey(key);
-    chrome.storage.local.set({ apiKey: key }, () => {
-      alert("API key saved successfully!");
-    });
-    chrome.runtime.sendMessage({
-      type: "STATE_CHANGED",
-      state: { apiKey: key },
-    });
-    setIsOpenSettings(false);
-  };
-
-  const handleSelectSymbol2 = (symbol) => {
-    setSelectedSymbol(symbol);
-    chrome.storage.local.set({ selectedSymbol: symbol });
-    chrome.runtime.sendMessage({
-      type: "STATE_CHANGED",
-      state: { selectedSymbol: symbol },
-    });
-  };
 
   // Update darkMode state in chrome.storage.local and broadcast change
   const updateDarkMode = (mode) => {
@@ -141,16 +82,6 @@ function contentScript() {
     });
   };
 
-  // Update selectedCategory state in chrome.storage.local and broadcast change
-  const updateSelectedCategory = (category) => {
-    setSelectedCategory(category);
-    chrome.storage.local.set({ selectedCategory: category });
-    chrome.runtime.sendMessage({
-      type: "STATE_CHANGED",
-      state: { selectedCategory: category },
-    });
-  };
-
   // Listen for state changes from other tabs
   useEffect(() => {
     const handleMessage = (message) => {
@@ -166,15 +97,6 @@ function contentScript() {
         }
         if (message.state.categories !== undefined) {
           setCategories(message.state.categories);
-        }
-        if (message.state.selectedCategory !== undefined) {
-          setSelectedCategory(message.state.selectedCategory);
-        }
-        if (message.state.apiKey !== undefined) {
-          setApiKey(message.state.setApiKey);
-        }
-        if (message.state.selectedSymbol !== undefined) {
-          setSelectedSymbol(message.state.selectedSymbol);
         }
       }
     };
@@ -221,12 +143,9 @@ function contentScript() {
       e.preventDefault(); // Prevent click if dragged
       return;
     }
-
-    // Toggle container visibility
-    const newVisibility = !containerVisible;
-    updateContainerVisible(newVisibility);
-
-    // console.log("Button clicked, containerVisible:", newVisibility);
+    // Handle button click logic here
+    updateContainerVisible((prev) => !prev);
+    console.log("Button clicked!");
   };
 
   useEffect(() => {
@@ -238,8 +157,6 @@ function contentScript() {
       document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isDragging, offset]);
-
-  //-------------------------
 
   useEffect(() => {
     const container = document.getElementById("robin-root");
@@ -286,7 +203,7 @@ function contentScript() {
   };
 
   const handleCategoryChange = (category) => {
-    updateSelectedCategory(category);
+    setSelectedCategory(category);
   };
 
   const getTextColor = (category) => {
@@ -322,7 +239,6 @@ function contentScript() {
           <AiOutlinePoweroff />
         </button>
       </div>
-
       {containerVisible && (
         <div
           style={{
@@ -354,20 +270,6 @@ function contentScript() {
             </span>
           </div>
 
-          {/* TESING  */}
-          {/* <kite-button
-            href="#"
-            data-kite=""
-            data-exchange="NSE"
-            data-tradingsymbol="SBIN"
-            data-transaction_type="BUY"
-            data-quantity="1"
-            data-order_type="MARKET"
-          >
-            Buy SBI stock
-          </kite-button>
-          <div>{apiKey}</div> */}
-
           {/* search bar ☻🎾 */}
           <SearchModal
             darkMode={darkMode}
@@ -390,46 +292,39 @@ function contentScript() {
               <table
                 style={{
                   fontSize: "14px",
+                  fontWeight: "200",
+                  color: darkMode ? "white" : "black",
                   width: "100%",
-                  textAlign: "left",
-                  color: darkMode ? "#9ca3af" : "#6b7280",
+                  tableLayout: "fixed",
                 }}
+                className=""
               >
-                <thead className="">
-                  <tr>
-                    <th className="px-2 py-1"></th>
-                    <th className="px-2 py-1 dark:text-gray-500 text-gray-400"></th>
-                    <th className="px-2 py-1 dark:text-gray-500 text-gray-400"></th>
-                    <th className="px-2 py-1"></th>
-                    <th className="px-2 py-1"></th>
-                    <th className="px-2 py-1"></th>
-                    <th className="px-2 py-1"></th>
-                  </tr>
-                </thead>
-                <tbody style={{ cursor: "default" }}>
-                  {categories[selectedCategory].length > 0 ? (
+                <tbody>
+                  {categories[selectedCategory].length ? (
                     categories[selectedCategory].map((symbol, index) => (
                       <tr
                         key={index}
-                        style={{
-                          fontSize: "12px",
-                          lineHeight: "20px",
-                          // color: symbol ? "#5b9a5d" : "#e25f5b",
-                          borderBottom: `1px solid ${
-                            darkMode ? "#232325" : "#f3f4f6"
-                          }`,
-                        }}
-                        onMouseEnter={() => {
-                          setHoveredIndex(index);
-                          // handleSelectSymbol2(symbol);
-                        }}
-                        onMouseLeave={() => {
-                          setHoveredIndex(null);
-                          // handleSelectSymbol2(null);
-                        }}
+                        onMouseEnter={() => setHoveredIndex(index)}
+                        onMouseLeave={() => setHoveredIndex(null)}
+                        className="hover:bg-slate-700"
+                        style={{ cursor: "pointer" }}
                       >
                         <td
-                          style={{ padding: "4px 8px", color: "#5b9a5d" }}
+                          style={{
+                            padding: "4px 8px",
+                            color:
+                              hoveredIndex === index
+                                ? "black"
+                                : darkMode
+                                ? "white"
+                                : "black",
+                            backgroundColor:
+                              hoveredIndex === index
+                                ? "#e2e8f0"
+                                : "transparent",
+                            borderRadius:
+                              hoveredIndex === index ? "6px" : "9a5d",
+                          }}
                           className=" "
                         >
                           {symbol}
@@ -437,66 +332,48 @@ function contentScript() {
                         <td style={{ padding: "4px 8px" }}></td>
                         <td style={{ padding: "4px 8px" }}></td>
                         <td style={{ padding: "4px 8px" }}></td>
-                        {/* <td style={{ padding: "4px 8px" }}></td> */}
-                        {/* <td style={{ padding: "4px 8px" }}></td> */}
-
-                        {/* {hoveredIndex === index && ( */}
-                        {true && (
+                        <td style={{ padding: "4px 8px" }}></td>
+                        <td style={{ padding: "4px 8px" }}></td>
+                        {hoveredIndex === index && (
                           <td
                             style={{
                               cursor: "pointer",
                               border: "1px solid re",
-                              // position:  "absolute",
-                              // right: "10px",
-                              gap: "3px",
-                              color: "red",
-                              display: `${
-                                hoveredIndex === index ? "flex" : "none"
-                              }`,
+                              position: "absolute",
+                              right: "10px",
+                              gap: "6px",
+                              color: "white",
+                              display: "flex",
                               justifyItems: "center",
                               alignItems: "center",
                             }}
                           >
-                            <button
+                            <span
                               style={{
-                                color: "red",
+                                color: "white",
                                 backgroundColor: "#4987ee",
-                                padding: "1px 10px",
+                                padding: "1px 16px",
                                 borderRadius: "3px",
                               }}
-                              id="#buy-button"
-                              data-kite={apiKey}
-                              data-exchange="NSE"
-                              data-tradingsymbol={symbol}
-                              data-transaction_type="BUY"
-                              data-quantity="1"
-                              data-order_type="MARKET"
                             >
                               B
-                            </button>
-                            <button
+                            </span>
+                            <span
                               style={{
                                 color: "white",
                                 backgroundColor: "#d4603b",
-                                padding: "1px 10px",
+                                padding: "1px 16px",
                                 borderRadius: "3px",
                               }}
-                              data-kite={apiKey}
-                              data-exchange="NSE"
-                              data-tradingsymbol={symbol}
-                              data-transaction_type="SELL"
-                              data-quantity="1"
-                              data-order_type="MARKET"
                             >
                               S
-                            </button>
+                            </span>
                             <span
                               style={{
                                 padding: "1px 1px",
                                 marginLeft: "1px",
                                 border: "1px solid re",
                                 fontSize: "20px",
-                                color: darkMode ? "white" : "black",
                               }}
                             >
                               <IoIosClose
@@ -561,7 +438,6 @@ function contentScript() {
               >
                 1
               </div>
-
               <div
                 onClick={() => handleCategoryChange("category2")}
                 style={{
@@ -575,7 +451,6 @@ function contentScript() {
               >
                 2
               </div>
-
               <div
                 onClick={() => handleCategoryChange("category3")}
                 style={{
@@ -589,7 +464,6 @@ function contentScript() {
               >
                 3
               </div>
-
               <div
                 onClick={() => handleCategoryChange("category4")}
                 style={{
@@ -603,27 +477,7 @@ function contentScript() {
               >
                 4
               </div>
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-                onClick={() => setIsOpenSettings(true)}
-              >
-                <CiSettings />
-              </div>
             </div>
-
-            {isOpenSettings && (
-              <SettingsModal
-                apiKey={apiKey}
-                onSave={handleSaveApiKey}
-                onClose={() => setIsOpenSettings(false)}
-              />
-            )}
           </div>
         </div>
       )}

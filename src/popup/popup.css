@@ -1,4 +1,12 @@
 body {
-    height: 400px;
-    width: 400px;
+  height: 100px;
+  width: 200px;
+  background-color: gray;
+  color: black;
+}
+
+.my-zindex {
+  z-index: 10000;
+  left: 10px 10px;
+  top: 10px 10px;
 }

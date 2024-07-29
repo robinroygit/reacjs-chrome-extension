@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kite Trade</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <h1>Kite Trade</h1>
+    <form id="trade-form">
+      <input type="text" id="symbol" placeholder="Symbol" required>
+      <input type="number" id="quantity" placeholder="Quantity" required>
+      <input type="number" id="price" placeholder="Price" required>
+      <select id="order-type">
+        <option value="BUY">Buy</option>
+        <option value="SELL">Sell</option>
+      </select>
+      <button type="submit">Place Order</button>
+    </form>
+    <div id="status"></div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

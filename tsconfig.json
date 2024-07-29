@@ -12,7 +12,16 @@
     "src/contentScript/index.jsx",
     "src/contentScript/DraggableComponent.jsx",
     "src/contentScript/contentScript.jsx",
-    "src/contentScript/components/SearchModal.jsx"
+    "src/contentScript/components/SearchModal.jsx",
+    "src/background/background.js",
+    "src/tabs/tabs.jsx",
+    "src/tabs/index.jsx",
+    "src/popup/popup.jsx",
+    "src/popup/index.jsx",
+    "src/options/options.jsx",
+    "src/options/index.jsx",
+    "src/tabs/components/About.jsx",
+    "src/tabs/components/Home.jsx"
   ],
   "exclude": ["node_modules"]
 }

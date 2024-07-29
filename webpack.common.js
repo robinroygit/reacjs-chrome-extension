@@ -16,11 +16,13 @@ module.exports = {
     module: {
         rules: [
             {
-                use: 'babel-loader',
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                options: {
-                    presets: ['@babel/preset-react'],
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react'],
+                    },
                 },
             },
             {
@@ -45,7 +47,7 @@ module.exports = {
                 ],
             },
             {
-                type: 'assets/resource',
+                type: 'asset/resource',
                 test: /\.(png|jpg|jpeg|gif|woff|woff2|tff|eot|svg)$/,
             },
         ],

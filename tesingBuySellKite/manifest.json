@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "000Kite Trade Extension new buy and sell",
+  "version": "1.0",
+  "description": "Place stock orders from any tab using Zerodha Kite",
+  "permissions": ["storage", "activeTab", "tabs"],
+  "host_permissions": ["https://*.zerodha.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "icon48.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}
