@@ -4,7 +4,6 @@
   "description": "chrome extension zerodha-kite",
   "version": "1.0.0",
   "action": {
-    "default_popup": "popup.html",
     "default_title": "zerodha-kite-popup",
     "default_icon": "icon.png"
   },
@@ -22,19 +21,29 @@
     "48": "icon.png",
     "128": "icon.png"
   },
-  "options_page": "options.html",
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
+      "exclude_matches": [
+        "*://chatgpt.com/*",
+        "*://www.example.com/*",
+        "*://another-website.com/*"
+      ],
       "js": ["contentScript.js", "jquery.min.js"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["EQUITY_L.csv", "publisher.js", "jquery.min.js"],
+      "resources": [
+        "jquery.min.js",
+        "publisher.min.css",
+        "publisher.js",
+        "EQUITY_L.csv",
+        "buy-button.png"
+      ],
       "matches": ["<all_urls>"]
     }
   ]

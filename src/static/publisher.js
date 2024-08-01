@@ -53,7 +53,7 @@
 			return false;
 		});
 
-		$("body").append($("<div id='kite-modal-wrap'>").append(mod));
+		$("#robin-root-div").append($("<div id='kite-modal-wrap'>").append(mod));
 		mod.append(close).append(frame);
 
 		var fr = frame.contents()[0];
@@ -514,7 +514,9 @@
 		$ = jq;
 	
 		$(document).ready(function() {
-			$("body").append($("<link>").attr("rel", "stylesheet").attr("href", _root + _uri_css));
+			// $("body").append($("<link>").attr("rel", "stylesheet").attr("href", _root + _uri_css));
+			// $("body").append($("<link>").attr("rel", "stylesheet").attr("href", _root + _uri_css));
+
 			convertDataButtons();
 	
 			// Function to handle added nodes

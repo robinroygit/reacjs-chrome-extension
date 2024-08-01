@@ -11,9 +11,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 
 
-// background.js
-console.log("Background script loaded");
-
 
 
 // Handle incoming messages
